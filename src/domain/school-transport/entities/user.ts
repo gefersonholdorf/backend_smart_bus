@@ -84,7 +84,7 @@ export class User extends EntityBase<UserProps> {
                 email: props.email,
                 cpf: props.cpf,
                 phone: props.phone,
-                address: props.phone,
+                address: props.address,
                 password: props.password,
                 role: props.role,
                 status: props.status ?? 'ATIVO'

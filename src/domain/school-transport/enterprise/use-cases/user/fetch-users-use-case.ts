@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { Either, right } from "src/core/exceptions/either";
 import { UserRepository } from "../../repositories/user-repository";
-import { ResourceNotFoundError } from "src/core/exceptions/errors/resource-not-found-error";
 import { User } from "src/domain/school-transport/entities/user";
 
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
     items: T[];
     page: number;
     limit: number;
@@ -13,22 +12,23 @@ interface PaginatedResponse<T> {
     sortDirection: 'asc' | 'desc';
   }
 
-interface GetUserByIdUseCaseRequest {
+interface FetchUsersUseCaseRequest {
     page: number;
     limit: number;
     orderBy: string;
     sortDirection: 'asc' | 'desc';
 }
 
-type GetUserByIdUseCaseResponse = Either<ResourceNotFoundError, PaginatedResponse<User>>
+type FetchUsersUseCaseResponse = Either<never, {pagination_params: PaginatedResponse<User>}
+>
 
 @Injectable()
-export class GetUserByIdUseCase{
+export class FetchUsersUseCase{
     constructor(
         private readonly userRepository: UserRepository,
     ) {}
 
-    async execute(data: GetUserByIdUseCaseRequest): Promise<GetUserByIdUseCaseResponse> {
+    async execute(data: FetchUsersUseCaseRequest): Promise<FetchUsersUseCaseResponse> {
         const {page, limit, orderBy, sortDirection} = data
 
         const users = await this.userRepository.findAll({
@@ -36,12 +36,14 @@ export class GetUserByIdUseCase{
         })
 
         return right({
-            items: users,
-            total: users.length,
-            page: page,
-            limit: limit,
-            orderBy: orderBy,
-            sortDirection: sortDirection
+            pagination_params: {
+                items: users,
+                total: users.length,
+                page: page,
+                limit: limit,
+                orderBy: orderBy,
+                sortDirection: sortDirection
+            }
         })
     }
 }
