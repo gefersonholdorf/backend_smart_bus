@@ -4,6 +4,7 @@ import { UserRepository } from "../../repositories/user-repository";
 import { HashedService } from "../../encrypt/hashed-service";
 import { ExistingUserError } from "src/core/exceptions/errors/existing-user-error";
 import { User, ROLE } from "src/domain/school-transport/entities/user";
+import { EntityStatus } from "generated/prisma";
 
 interface CreateUserUseCaseRequest {
     name: string
@@ -13,6 +14,7 @@ interface CreateUserUseCaseRequest {
     address: string
     password: string
     role: ROLE
+    status: EntityStatus
 }
 
 type CreateUserUseCaseResponse = Either<ExistingUserError, {}>
@@ -25,7 +27,7 @@ export class CreateUserUseCase{
     ) {}
 
     async execute(data: CreateUserUseCaseRequest): Promise<CreateUserUseCaseResponse> {
-        const {name, email, cpf, phone, address, password, role} = data
+        const {name, email, cpf, phone, address, password, role, status} = data
 
         const existingUserByCpf = await this.userRepository.findByCpf(cpf)
 
@@ -37,7 +39,7 @@ export class CreateUserUseCase{
 
         const passwordHashed = await this.hashedService.encrypt(password)
 
-        const user = User.create({name, email, cpf, phone, address, password: passwordHashed, role})
+        const user = User.create({name, email, cpf, phone, address, password: passwordHashed, role, status})
 
         await this.userRepository.create(user)
 

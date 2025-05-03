@@ -4,6 +4,7 @@ import { UserRepository } from "../../repositories/user-repository";
 import { HashedService } from "../../encrypt/hashed-service";
 import { ROLE } from "src/domain/school-transport/entities/user";
 import { ResourceNotFoundError } from "src/core/exceptions/errors/resource-not-found-error";
+import { EntityStatus } from "generated/prisma";
 
 interface UpdateUserUseCaseRequest {
     userId: number
@@ -11,6 +12,7 @@ interface UpdateUserUseCaseRequest {
     phone?: string
     address?: string
     password?: string
+    status?: EntityStatus
     role?: ROLE
 }
 
@@ -24,7 +26,7 @@ export class UpdateUserUseCase{
     ) {}
 
     async execute(data: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
-        const {userId, name, phone, address, password, role} = data
+        const {userId, name, phone, address, password, role, status} = data
 
         const user = await this.userRepository.findById(userId)
 
@@ -39,6 +41,7 @@ export class UpdateUserUseCase{
         user.address = address ?? user.address
         user.role = role ?? user.role
         user.password = passwordHashed
+        user.status = status ?? user.status
 
         await this.userRepository.save(userId, user)
 
