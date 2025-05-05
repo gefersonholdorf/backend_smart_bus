@@ -1,9 +1,8 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Post, Query, UnauthorizedException, UsePipes } from "@nestjs/common";
-import { CredentialsInvalidError } from "src/core/exceptions/errors/credentials-invalid-error";
+import { Controller, Get, HttpCode, Query, UsePipes } from "@nestjs/common";
+import { FetchUsersUseCase } from "src/domain/school-transport/enterprise/use-cases/user/fetch-users-use-case";
+import { Public } from "src/infra/encrypt/auth/is-public";
 import { z } from "zod";
 import { ZodValidationPipe } from "../../pipes/zod-validation-pipe";
-import { Public } from "src/infra/encrypt/auth/is-public";
-import { FetchUsersUseCase } from "src/domain/school-transport/enterprise/use-cases/user/fetch-users-use-case";
 import { FetchUserPresenter } from "../../presenters/fetch-users-presenter";
 
 const paginationParamsSchema = z.object({

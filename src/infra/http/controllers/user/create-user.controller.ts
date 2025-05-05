@@ -35,7 +35,7 @@ export class CreateUserController{
 
         if(result.isLeft()) {
             if(result.value instanceof ExistingUserError) {
-                throw new ConflictException('Existing user!')
+                throw new ConflictException('Usuário já existente.')
             }
 
             throw new BadRequestException()
